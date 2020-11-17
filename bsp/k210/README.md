@@ -31,27 +31,37 @@ Kendryte中文含义为勘智，而勘智取自勘物探智。这颗芯片主要
 
 ## 2. 编译说明
 
-编译K210，需要先下载K210 BSP以及RT-Thread代码：
+编译K210，需要有RT-Thread的代码，因为K210的sdk是以软件包方式，所以需要在bsp/k210下做软件包更新。Windows下推进使用[env工具][1]，然后在console下进入bsp/k210目录中，运行：
 
-    git clone https://github.com/BernardXiong/K210.git
-    cd K210
-    git submodule init
-    git submodule update
+    cd bsp/k210
+    pkgs --update
 
-    git clone https://github.com/RT-Thread/rt-thread.git
-    cd rt-thread
-    git checkout -b dev-4.0.x origin/dev-4.0.x
+如果在Linux平台下，可以先执行
 
-注意，因为RT-Thread整体代码太庞大，所以并未把RT-Thread git repo以一个submodule方式加入到K210 BSP git repo中，
-而是需要把RT-Thread代码克隆到K210目录下，并切换到dev-4.0.x分支。
+    scons --menuconfig
 
-编译推荐使用[env工具][1]，可以在console下进入到`K210`目录中，运行以下命令：
+它会自动下载env相关脚本到~/.env目录，然后执行
+
+    source ~/.env/env.sh
+    
+    cd bsp/k210
+    pkgs --update
+下载risc-v的工具链，[下载地址](https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases)  
+    
+更新完软件包后，在`rtconfig.py`中将risc-v工具链的本地路径加入文档。
+注：  
+1. 工具链建议使用上方提供的，`kendryte的官方工具链`会报浮点类型不兼容的错误，`risc-v工具链8.2.0之前的版本`会出现头文件不兼容的问题。
+2. 网上传需要开启C++ 17,认为k210的神经网络编译器nncase多数语法由C++ 17,故需要开启C++ 17。个人认为没有必要，nncase是在PC端独立使用的，
+作用是将神经网络模型转为kmodel格式，此格式文件为已经编译的二进制文件。（[shentalon](13212105191@163.com)注）  
+
+然后执行scons编译：  
 
     set RTT_EXEC_PATH=your_toolchains
     scons
 
-来编译这个板级支持包。如果编译正确无误，会产生rtthread.elf、rtthread.bin文件。其中rtthread.bin需要烧写到设备中进行运行。
-
+来编译这个板级支持包。如果编译正确无误，会产生rtthread.elf、rtthread.bin文件。其中rtthread.bin需要烧写到设备中进行运行。  
+注：如果初次使用编译报错，可能是使用的SDK过老，使用`menuconfig`命令，在→ RT-Thread online packages → peripheral libraries 
+and drivers → the kendryte-sdk package for rt-thread中将SDK改为latest版本即可。
 ## 3. 烧写及执行
 
 连接好串口，然后使用[K-Flash](https://kendryte.com/downloads/)工具进行烧写bin文件。

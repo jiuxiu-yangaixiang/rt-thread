@@ -3,6 +3,8 @@ menu "Hardware Drivers Config"
 config SOC_STM32F469NI
     bool
     select SOC_SERIES_STM32F4
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
     default y
 
 menu "Onboard Peripheral Drivers"
@@ -46,6 +48,12 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         select RT_USING_PIN
         default n
+    if BSP_USING_SDCARD
+    config SDIO_MAX_FREQ
+        int "sdio max freq"
+        range 0 24000000
+        default 24000000
+    endif
         
     config BSP_USING_TOUCH
         bool "Enable TOUCH"
@@ -141,7 +149,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS
         default n
 
-    config BSP_USING_USBD_FS
+    config BSP_USING_USBD
         bool "Enable OTGFS as USB device"
         select RT_USING_USB_DEVICE
         default n
@@ -149,6 +157,8 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_LTDC
         bool "Enable LTDC"
         default n
+    source "../libraries/HAL_Drivers/Kconfig"
+    
 endmenu
 
 menu "Board extended module Drivers"

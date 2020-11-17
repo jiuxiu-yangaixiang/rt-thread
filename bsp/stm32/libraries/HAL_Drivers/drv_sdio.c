@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-06-22     tyx          first
  * 2018-12-12     balanceTWK   first version
+ * 2019-06-11     WillianChan   Add SD card hot plug detection
  */
 
 #include "board.h"
@@ -851,7 +852,7 @@ int rt_hw_sdio_init(void)
         /* enable DMA clock && Delay after an RCC peripheral clock enabling*/
         SET_BIT(RCC->AHBENR, sdio_config.dma_rx.dma_rcc);
         tmpreg = READ_BIT(RCC->AHBENR, sdio_config.dma_rx.dma_rcc);
-#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F2)
         SET_BIT(RCC->AHB1ENR, sdio_config.dma_rx.dma_rcc);
         /* Delay after an RCC peripheral clock enabling */
         tmpreg = READ_BIT(RCC->AHB1ENR, sdio_config.dma_rx.dma_rcc);
@@ -877,5 +878,10 @@ int rt_hw_sdio_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdio_init);
+
+void stm32_mmcsd_change(void)
+{
+    mmcsd_change(host);
+}
 
 #endif

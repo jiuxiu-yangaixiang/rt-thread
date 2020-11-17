@@ -69,6 +69,11 @@ extern "C" {
 #endif /* RT_USING_I2C_BITOPS */
 #endif /* RT_USING_I2C */
 
+#ifdef RT_USING_PHY
+#include "drivers/phy.h"
+#include "drivers/phy_mdio.h"
+#endif /* RT_USING_PHY */
+
 #ifdef RT_USING_SDIO
 #include "drivers/mmcsd_core.h"
 #include "drivers/sd.h"
@@ -103,6 +108,10 @@ extern "C" {
 #include "drivers/adc.h"
 #endif
 
+#ifdef RT_USING_DAC
+#include "drivers/dac.h"
+#endif
+
 #ifdef RT_USING_PWM
 #include "drivers/rt_drv_pwm.h"
 #endif
@@ -124,6 +133,14 @@ extern "C" {
 
 #ifdef RT_USING_HWCRYPTO
 #include "drivers/crypto.h"
+#endif
+
+#ifdef RT_USING_PULSE_ENCODER
+#include "drivers/pulse_encoder.h"
+#endif
+
+#ifdef RT_USING_INPUT_CAPTURE
+#include "drivers/rt_inputcapture.h"
 #endif
 
 #ifdef __cplusplus
